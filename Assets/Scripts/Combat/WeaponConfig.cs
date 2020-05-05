@@ -1,11 +1,13 @@
 ﻿using GameDevTV.Inventories;
 using SciFi.Attributes;
+using SciFi.Stats;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SciFi.Combat
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/Make new Weapon", order = 0)]
-    public class WeaponConfig : EquipableItem
+    public class WeaponConfig : EquipableItem, IModifierProvider
     {
         [SerializeField] private Weapon _equippedPrefab = null;
         [SerializeField] private AnimatorOverrideController _animatorOverride = null;
@@ -103,6 +105,22 @@ namespace SciFi.Combat
         public bool HasProjectile()
         {
             return _projectile != null;
+        }
+
+        public IEnumerable<float> GetAdditiveModifiers(Stat stat)
+        {
+            if (stat == Stat.Damage)
+            {
+                yield return _weaponDamage;
+            }
+        }
+
+        public IEnumerable<float> GetPercentageModifiers(Stat stat)
+        {
+            if (stat == Stat.Damage)
+            {
+                yield return _percentageBonus;
+            }
         }
     }
 

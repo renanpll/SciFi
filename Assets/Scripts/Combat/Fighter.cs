@@ -12,7 +12,7 @@ using GameDevTV.Inventories;
 namespace SciFi.Combat
 {
     
-    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
+    public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] private float _attackSpeed = 1f;
         [SerializeField] private Transform _rightHandTransform = null;
@@ -177,23 +177,6 @@ namespace SciFi.Combat
             string weaponName = (string)state;
             WeaponConfig weapon = UnityEngine.Resources.Load<WeaponConfig>(weaponName);
             EquipWeapon(weapon);
-        }
-
-        //IModifierProvider Implementation
-        public IEnumerable<float> GetAdditiveModifiers(Stat stat)
-        {
-            if (stat == Stat.Damage)
-            {
-                yield return _currentWeaponConfig.GetDamage();
-            }
-        }
-
-        public IEnumerable<float> GetPercentageModifiers(Stat stat)
-        {
-            if (stat == Stat.Damage)
-            {
-                yield return _currentWeaponConfig.GetPercentageBonus();
-            }
         }
     }
 

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6c6848c59deb84a8a017fb9665fd47, type: 3}
+  m_Name: Hat of vitality
+  m_EditorClassIdentifier: 
+  itemID: 962830dc-bf48-4032-82c6-70988d2a5319
+  displayName: Hat of Vitality
+  description: 'Hat '
+  icon: {fileID: 21300000, guid: c1b61b3a91732a747a8496fc75a13fe2, type: 3}
+  pickup: {fileID: 8422467536940203805, guid: 0437c43e6b0abfe44a1ab321974d0c9a, type: 3}
+  stackable: 0
+  allowedEquipLocation: 0
+  _additiveModifiers:
+  - stat: 0
+    value: 100
+  _percentageModifiers: []
