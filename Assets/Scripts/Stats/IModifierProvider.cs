@@ -1,0 +1,12 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace SciFi.Stats
+{
+    public interface IModifierProvider
+    {
+        IEnumerable<float> GetAdditiveModifiers(Stat stat);
+
+        IEnumerable<float> GetPercentageModifiers(Stat stat);
+    }
+}
