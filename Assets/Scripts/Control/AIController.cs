@@ -1,24 +1,25 @@
 ﻿using UnityEngine;
 using SciFi.Combat;
-using SciFi.Core;
 using SciFi.Movement;
 using SciFi.Attributes;
 using GameDevTV.Utils;
-using System;
 
 namespace SciFi.Control
 {
     public class AIController : MonoBehaviour
     {
+        [Range(0, 1)]
         [SerializeField] private float _patrolSpeedFraction = 0.3f;
-        [SerializeField] private float _chaseDistance = 5f;
-        [SerializeField] private float _suspicionTime = 4f;
-        [SerializeField] private float _shoutDistance = 5f;
-        [SerializeField] private float _aggroCooldownTime = 3f;
+        [Range(0, 1)]
+        [SerializeField] private float _suspicionSpeedFraction = 0.5f;
+        [SerializeField] private float _detectionRange = 8f;
+        [SerializeField] private float _fovMaxAngle = 45f;
+        [SerializeField] private float _suspicionTime = 10f;
+        [SerializeField] private float _aggroCooldownTime = 5f;
         [SerializeField] private float _waypointTolerance = 1f;
         [SerializeField] private float _waypointDwellTime = 3f;
+
         [SerializeField] private PatrolPath _patrolPath = null;
-        [Range(0, 1)]
 
         private GameObject _player;
         private Fighter _fighter;
@@ -33,6 +34,7 @@ namespace SciFi.Control
         private float _timeSinceAggrevated = Mathf.Infinity;
 
         private bool _hasShout = false;
+        private Vector3 _lastPlayerPosition;
 
         private void Awake()
         {
@@ -71,9 +73,11 @@ namespace SciFi.Control
             UpdateTimers();
         }
 
-        public void Aggrevate()
+        private void Aggrevate()
         {
             _timeSinceAggrevated = 0;
+            _timeSinceLastSawPlayer = 0;
+            _lastPlayerPosition = _player.transform.position;
         }
 
         private void UpdateTimers()
@@ -122,13 +126,11 @@ namespace SciFi.Control
 
         private void SuspicionBehavior()
         {
-            GetComponent<ActionScheduler>().StartAction(null);
+            _mover.StartMoveAction(_lastPlayerPosition, _suspicionSpeedFraction);
         }
 
         private void AttackBehavior()
         {
-
-            _timeSinceLastSawPlayer = 0;
             _fighter.Attack(_player);
 
             if (!_hasShout)
@@ -141,7 +143,7 @@ namespace SciFi.Control
         {
             _hasShout = true;
 
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, _shoutDistance, Vector3.up, 0);
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, _detectionRange, Vector3.up, 0);
 
             foreach (RaycastHit hit in hits)
             {
@@ -157,10 +159,38 @@ namespace SciFi.Control
 
         private bool IsAggrevated()
         {
+            return HasSight() || _timeSinceAggrevated < _aggroCooldownTime;
+        }
 
+        private bool HasSight()
+        {
+            if (!GetIsInRange()) return false;
+
+            Vector3 playerDirection = (_player.transform.position - transform.position).normalized;
+            playerDirection.y *= 0;
+
+            float angle = Vector3.Angle(transform.forward, playerDirection);
+            if (angle > _fovMaxAngle) return false;
+
+            Ray ray = new Ray((transform.position + Vector3.up), playerDirection);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, _detectionRange))
+            {
+                if (!hit.transform.CompareTag("Player")) return false;
+            }
+            else return false;
+
+            _timeSinceLastSawPlayer = 0;
+            _lastPlayerPosition = _player.transform.position;
+
+            return true;
+        }
+
+        private bool GetIsInRange()
+        {
             float distance = Vector3.Distance(transform.position, _player.transform.position);
 
-            return distance < _chaseDistance || _timeSinceAggrevated < _aggroCooldownTime;
+            return distance < _detectionRange;
         }
 
         private Vector3 GetGuardPosition()
@@ -170,8 +200,14 @@ namespace SciFi.Control
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _chaseDistance);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, _detectionRange);
+
+            Vector3 fovLine1 = Quaternion.AngleAxis(_fovMaxAngle, transform.up) * transform.forward * _detectionRange;
+            Vector3 fovLine2 = Quaternion.AngleAxis(-_fovMaxAngle, transform.up) * transform.forward * _detectionRange;
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(transform.position, fovLine1);
+            Gizmos.DrawRay(transform.position, fovLine2);
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using SciFi.Movement;
-using SciFi.Combat;
 using SciFi.Attributes;
 using System;
 using UnityEngine.EventSystems;
-using System.Diagnostics;
 using UnityEngine.AI;
 
 namespace SciFi.Control

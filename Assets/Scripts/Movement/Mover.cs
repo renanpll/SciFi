@@ -9,11 +9,14 @@ namespace SciFi.Movement
     public class Mover : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] private float _maxSpeed = 5.66f;
+        [SerializeField] private float _sneakySpeed = 1.55f;
         [SerializeField] private float _maxNavPathLength = 30f;
 
         private NavMeshAgent _agent;
         private Animator _anim;
         private Health _health;
+
+        private bool _isSneaky = false;
 
         private void Awake()
         {
@@ -27,6 +30,11 @@ namespace SciFi.Movement
             _agent.enabled = !_health.IsDead();
 
             UpdateAnimator();
+
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                _isSneaky = !_isSneaky;
+            }
         }
 
         public void StartMoveAction(Vector3 destination, float speedFraction)
@@ -49,7 +57,10 @@ namespace SciFi.Movement
 
         public void MoveTo(Vector3 destination, float speedFraction)
         {
-            _agent.speed = _maxSpeed * Mathf.Clamp01(speedFraction);
+            float speed = _maxSpeed;
+            if (_isSneaky) speed = _sneakySpeed;
+
+            _agent.speed = speed * Mathf.Clamp01(speedFraction);
             _agent.destination = destination;
             _agent.isStopped = false;
         }

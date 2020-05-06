@@ -4,14 +4,12 @@ using SciFi.Core;
 using SciFi.Saving;
 using SciFi.Attributes;
 using SciFi.Stats;
-using System.Collections.Generic;
 using GameDevTV.Utils;
-using System;
 using GameDevTV.Inventories;
 
 namespace SciFi.Combat
 {
-    
+
     public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] private float _attackSpeed = 1f;
