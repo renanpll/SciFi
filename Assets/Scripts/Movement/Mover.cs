@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using SciFi.Core;
 using SciFi.Saving;
 using SciFi.Attributes;
+using System;
 
 namespace SciFi.Movement
 {
@@ -11,6 +12,10 @@ namespace SciFi.Movement
         [SerializeField] private float _maxSpeed = 5.66f;
         [SerializeField] private float _sneakySpeed = 1.55f;
         [SerializeField] private float _maxNavPathLength = 30f;
+
+        [SerializeField] private AudioSource _footStepAudioSource;
+
+        public event Action onNoiseMaking;
 
         private NavMeshAgent _agent;
         private Animator _anim;
@@ -25,7 +30,7 @@ namespace SciFi.Movement
             _health = GetComponent<Health>();
         }
 
-        void Update()
+        private void Update()
         {
             _agent.enabled = !_health.IsDead();
 
@@ -33,7 +38,8 @@ namespace SciFi.Movement
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
-                _isSneaky = !_isSneaky;
+                if (gameObject.CompareTag("Player"))
+                    _isSneaky = !_isSneaky;
             }
         }
 
@@ -86,6 +92,15 @@ namespace SciFi.Movement
         {
             Vector3 velocity = transform.InverseTransformDirection(_agent.velocity);
             _anim.SetFloat("forwardSpeed", velocity.z);
+        }
+
+        //Triggered by animation event
+        private void Step()
+        {
+            if (gameObject.CompareTag("Player"))
+                onNoiseMaking();
+
+            _footStepAudioSource.Play();
         }
 
         public object CaptureState()

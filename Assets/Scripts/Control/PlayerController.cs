@@ -28,7 +28,7 @@ namespace SciFi.Control
             _health = GetComponent<Health>();
         }
 
-        void Update()
+        private void Update()
         {
             if (InteractWithUI())
             {
@@ -137,8 +137,6 @@ namespace SciFi.Control
             return true;
         }
 
-
-
         private void SetCursor(CursorType type)
         {
             CursorMapping mapping = GetCursorMapping(type);
@@ -156,7 +154,6 @@ namespace SciFi.Control
             }
             return _cursorMappings[0];
         }
-
 
         private static Ray GetMouseRay()
         {

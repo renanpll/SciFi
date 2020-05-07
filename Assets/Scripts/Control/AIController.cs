@@ -12,8 +12,8 @@ namespace SciFi.Control
         [SerializeField] private float _patrolSpeedFraction = 0.3f;
         [Range(0, 1)]
         [SerializeField] private float _suspicionSpeedFraction = 0.5f;
-        [SerializeField] private float _detectionRange = 8f;
-        [SerializeField] private float _fovMaxAngle = 45f;
+        [SerializeField] private float _detectionRange = 10f;
+        [SerializeField] private float _fovMaxAngle = 75f;
         [SerializeField] private float _suspicionTime = 10f;
         [SerializeField] private float _aggroCooldownTime = 5f;
         [SerializeField] private float _waypointTolerance = 1f;
@@ -50,6 +50,19 @@ namespace SciFi.Control
         private void Start()
         {
             _guardPosition.ForceInit();
+        }
+
+        private void OnEnable()
+        {
+            if (_player != null)
+                _player.GetComponent<Mover>().onNoiseMaking += HasHeard;
+        }
+
+        private void OnDisable()
+        {
+            if (_player != null)
+                _player.GetComponent<Mover>().onNoiseMaking -= HasHeard;
+
         }
 
         private void Update()
@@ -184,6 +197,14 @@ namespace SciFi.Control
             _lastPlayerPosition = _player.transform.position;
 
             return true;
+        }
+
+        private void HasHeard()
+        {
+            if (!GetIsInRange()) return;
+
+            _timeSinceLastSawPlayer = 0;
+            _lastPlayerPosition = _player.transform.position;
         }
 
         private bool GetIsInRange()

@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf19f130ccdaeb0459d75f87ada9aac2, type: 3}
   m_Name: Saber
   m_EditorClassIdentifier: 
+  itemID: 63600223-e1d4-4084-803d-0789fb25159f
+  displayName: Saber
+  description: Saber
+  icon: {fileID: 0}
+  pickup: {fileID: 0}
+  stackable: 0
+  allowedEquipLocation: 5
   _equippedPrefab: {fileID: -3645036170486779469, guid: 00fdbca55a29f2f4ab58d84c6b3cbe4c,
     type: 3}
   _animatorOverride: {fileID: 22100000, guid: 0509bbd8894470a45888b6d161dee3f7, type: 2}
